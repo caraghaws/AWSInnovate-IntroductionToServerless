@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Customer Application
+
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        CUSTOMER_TABLE: !Ref CustomerTable
+
+Resources:
+  CustomerTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: name
+        Type: String
+        
+  CustomerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: customer/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Events:
+        AddCustomer:
+          Type: Api
+          Properties:
+            Path: /customer
+            Method: post
+        ListCustomers:
+          Type: Api
+          Properties:
+            Path: /customer
+            Method: get
+        DeleteCustomer:
+          Type: Api
+          Properties:
+            Path: /customer
+            Method: delete
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomerTable
+
+
+Outputs:
+  CustomerApi:
+    Description: "API Gateway endpoint URL for Prod stage for Customer function."
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/customer/"
