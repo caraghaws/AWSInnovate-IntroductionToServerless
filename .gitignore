@@ -1,3 +1,7 @@
+#sam
+samconfig.toml
+.aws-sam/
+
 # Logs
 logs
 *.log
@@ -102,3 +106,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+.DS_store
+
+
